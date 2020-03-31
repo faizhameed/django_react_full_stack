@@ -9,17 +9,24 @@ function App() {
     var ca = document.cookie.split(";");
     for (var i = 0; i < ca.length; i++) {
       var c = ca[i];
-      while (c.charAt(0) == " ") c = c.substring(1);
-      if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+      while (c.charAt(0) === " ") c = c.substring(1);
+      if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
     }
     return "";
   }
   const fetchData = async () => {
-    const response = await fetch("http://localhost:8000/leads/");
-    const data = await response.json();
-    setFetchedItem(data);
+    try {
+      const response = await fetch("http://localhost:8000/leads/");
+      if (response.status >= 400 && response.status < 600) {
+        throw new Error("Bad response from server: ", response.status);
+      }
+      const data = await response.json();
+      setFetchedItem(data);
 
-    console.log(fetchedItem);
+      console.log(fetchedItem);
+    } catch (error) {
+      console.log("Error Fetching", error);
+    }
   };
   const removeData = () => {
     setFetchedItem("");
