@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../utils/getCookie";
+import { connect } from "react-redux";
 
-const FetchData = () => {
+const FetchData = ({ userData }) => {
   const [fetchedItem, setFetchedItem] = useState("");
   const fetchData = async () => {
+    const token = userData.user.access;
     try {
-      const response = await fetch("http://localhost:8000/leads/");
+      const response = await fetch("http://localhost:8000/leads/", {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer" + token
+        }
+      });
       if (response.status >= 400 && response.status < 600) {
         throw new Error("Bad response from server: ", response.status);
       }
@@ -104,5 +113,7 @@ const FetchData = () => {
     </div>
   );
 };
-
-export default FetchData;
+const mapStateToProps = ({ userData }) => ({
+  userData
+});
+export default connect(mapStateToProps)(FetchData);
