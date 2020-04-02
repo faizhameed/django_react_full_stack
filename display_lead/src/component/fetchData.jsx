@@ -8,11 +8,10 @@ const FetchData = ({ userData }) => {
     const token = userData.user.access;
     try {
       const response = await fetch("http://localhost:8000/leads/", {
-        method: "post",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: "Bearer" + token
+          Authorization: "Bearer " + token
         }
       });
       if (response.status >= 400 && response.status < 600) {
