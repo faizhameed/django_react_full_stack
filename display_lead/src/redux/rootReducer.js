@@ -3,7 +3,7 @@ const INITIAL_STATE = {
   isLoggedIn: false,
   userData: "",
   isPending: false,
-  errorLogging: false
+  errorLogging: ""
 };
 
 const rootReducer = (state = INITIAL_STATE, action) => {
@@ -23,7 +23,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
         ...state,
         isPending: false,
         isLoggedIn: true,
-        errorLogging: false,
+        errorLogging: "",
         userData: action.payload
       };
     default:

@@ -11,7 +11,6 @@ export const loginRequest = async (url, creds) => {
     throw new Error("Bad response from server: ", response.status);
   }
   const data = await response.json().then(user => ({ user, response }));
-  console.log("response", data);
   return data;
 };
 
