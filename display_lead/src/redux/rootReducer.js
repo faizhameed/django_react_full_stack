@@ -19,6 +19,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
         errorLogging: action.payload
       };
     case reduxTypes.REQUEST_LOGIN_SUCCESS:
+      console.log("atredu", action.payload);
       return {
         ...state,
         isPending: false,

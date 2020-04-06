@@ -8,9 +8,17 @@ export const loginRequest = async (url, creds) => {
     body: `username=${creds.username}&password=${creds.password}`
   });
   if (response.status >= 400 && response.status < 600) {
-    throw new Error("Bad response from server: ", response.status);
+    throw new Error("Bad response from serverr: ", response.status);
   }
   const data = await response.json().then(user => ({ user, response }));
+  const jwt = {
+    refreshToken: data.user.refresh,
+    accessToken: data.user.access
+  };
+  localStorage.setItem("jwt", JSON.stringify(jwt));
+  console.log("Access1:", jwt.accessToken);
+  console.log("Access2:", data.user.access);
+  console.log("Access3:", JSON.parse(localStorage.jwt).accessToken);
   return data;
 };
 
