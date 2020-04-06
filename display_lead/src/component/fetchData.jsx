@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { getCookie } from "../utils/getCookie";
 import { connect } from "react-redux";
 
 const FetchData = ({ userData }) => {
   const [fetchedItem, setFetchedItem] = useState("");
   const fetchData = async () => {
-    const token = userData.user.access;
+    const token = JSON.parse(localStorage.jwt).accessToken;
     try {
       const response = await fetch("http://localhost:8000/leads/", {
         headers: {
@@ -15,7 +15,36 @@ const FetchData = ({ userData }) => {
         }
       });
       if (response.status >= 400 && response.status < 600) {
-        throw new Error("Bad response from server: ", response.status);
+        // getting new access token if its more than 5 mins
+        try {
+          const refreshRes = await fetch(
+            "http://127.0.0.1:8000/api/token/refresh/",
+            {
+              method: "post",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              body: `refresh=${JSON.parse(localStorage.jwt).refreshToken}`
+            }
+          );
+          if (refreshRes.status >= 400 && refreshRes.status < 600) {
+            throw new Error("Bad refreshRes from serverr: ", refreshRes.status);
+          }
+          const refreshData = await refreshRes
+            .json()
+            .then(user => ({ user, refreshRes }));
+          const jwt = {
+            // creating another jwt object to set into localStorage
+            refreshToken: JSON.parse(localStorage.jwt).refreshToken,
+            accessToken: refreshData.user.access
+          };
+          localStorage.setItem("jwt", JSON.stringify(jwt));
+          console.log("requesting another access token", jwt);
+          fetchData(); //calling fetch data again after adding new acess token
+        } catch (error) {
+          console.log(error);
+        }
       }
       const data = await response.json();
       setFetchedItem(data);
